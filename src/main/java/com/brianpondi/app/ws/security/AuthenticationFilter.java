@@ -63,6 +63,6 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
         UserDto userDto = userService.getUser(userName);
 
         res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
-        res.addHeader("UserID", String.valueOf(userDto.getId()));
+        res.addHeader("UserID", userDto.getUserId());
     }
 }
