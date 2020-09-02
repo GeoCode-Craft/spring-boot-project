@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users") //http://localhost:8081/users
+@RequestMapping("/users") //http://localhost:8081/mobile-app-ws/users
 public class UserController {
 
     @Autowired
@@ -79,7 +79,7 @@ public class UserController {
         return returnValue;
     }
     //paging:
-    //http://localhost:8081/users?page=1&limit=30
+    //http://localhost:8081/mobile-app-ws/users?page=1&limit=30
     @GetMapping( produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public List<UserRest> getUsers(@RequestParam(value = "page",defaultValue ="0")int page,
                                    @RequestParam(value = "limit",defaultValue ="25") int limit){
