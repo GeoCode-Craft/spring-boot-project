@@ -4,8 +4,7 @@ import com.brianpondi.app.ws.exceptions.UserServiceException;
 import com.brianpondi.app.ws.service.UserService;
 import com.brianpondi.app.ws.shared.dto.UserDto;
 import com.brianpondi.app.ws.ui.model.request.UserDetailsRequestModel;
-import com.brianpondi.app.ws.ui.model.response.ErrorMessages;
-import com.brianpondi.app.ws.ui.model.response.UserRest;
+import com.brianpondi.app.ws.ui.model.response.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -64,10 +63,17 @@ public class UserController {
         return returnValue;
     }
 
-    @DeleteMapping
-    public  String deleteUser()
+    @DeleteMapping(path="/{id}",
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public OperationStatusModel deleteUser(@PathVariable String  id)
     {
-        return "delete user was called";
+        OperationStatusModel returnValue = new OperationStatusModel();
+        returnValue.setOperationName(RequestOperationName.DELETE.name());
+
+        userService.deleteUser(id);
+
+        returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        return returnValue;
     }
 
 }
