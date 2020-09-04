@@ -5,6 +5,7 @@ import com.brianpondi.app.ws.service.UserService;
 import com.brianpondi.app.ws.shared.dto.UserDto;
 import com.brianpondi.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.brianpondi.app.ws.ui.model.response.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -41,8 +42,10 @@ public class UserController {
 
         if (userDetails.getFirstName().isEmpty()) throw  new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(userDetails, userDto);
+//        UserDto userDto = new UserDto();
+//        BeanUtils.copyProperties(userDetails, userDto);
+        ModelMapper modelMapper = new ModelMapper();
+        UserDto userDto = modelMapper.map(userDetails, UserDto.class);
 
         UserDto createdUser = userService.createUser(userDto);
         BeanUtils.copyProperties(createdUser, returnValue);

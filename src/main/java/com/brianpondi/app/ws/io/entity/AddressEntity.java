@@ -1,13 +1,39 @@
-package com.brianpondi.app.ws.shared.dto;
+package com.brianpondi.app.ws.io.entity;
 
-public class AddressDto {
+import com.brianpondi.app.ws.shared.dto.UserDto;
+
+import javax.persistence.*;
+import java.io.Serializable;
+
+@Entity(name="addresses")
+public class AddressEntity  implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue
     private long id;
+
+    @Column(length = 30, nullable = false)
     private String addressId;
+
+    @Column(length = 15, nullable = false)
     private String city;
+
+    @Column(length = 15, nullable = false)
     private String country;
+
+    @Column(length = 100, nullable = false)
     private String streetName;
+
+    @Column(length = 7, nullable = false)
     private String postalCode;
+
+    @Column(length = 10, nullable = false)
     private String type;
+
+    @ManyToOne
+    @JoinColumn(name = "users_id")
     private UserDto userDetails;
 
     public long getId() {
@@ -16,6 +42,14 @@ public class AddressDto {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(String addressId) {
+        this.addressId = addressId;
     }
 
     public String getCity() {
@@ -64,13 +98,5 @@ public class AddressDto {
 
     public void setUserDetails(UserDto userDetails) {
         this.userDetails = userDetails;
-    }
-
-    public String getAddressId() {
-        return addressId;
-    }
-
-    public void setAddressId(String addressId) {
-        this.addressId = addressId;
     }
 }
