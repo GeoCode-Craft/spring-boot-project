@@ -1,11 +1,14 @@
 package com.brianpondi.app.ws.ui.controller;
 
 import com.brianpondi.app.ws.exceptions.UserServiceException;
+import com.brianpondi.app.ws.service.AddressService;
 import com.brianpondi.app.ws.service.UserService;
+import com.brianpondi.app.ws.shared.dto.AddressDto;
 import com.brianpondi.app.ws.shared.dto.UserDto;
 import com.brianpondi.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.brianpondi.app.ws.ui.model.response.*;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -20,6 +23,12 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    AddressService addressService;
+
+    @Autowired
+    AddressService addressesService;
 
     @GetMapping(path="/{id}",
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
@@ -48,7 +57,8 @@ public class UserController {
         UserDto userDto = modelMapper.map(userDetails, UserDto.class);
 
         UserDto createdUser = userService.createUser(userDto);
-        BeanUtils.copyProperties(createdUser, returnValue);
+//        BeanUtils.copyProperties(createdUser, returnValue);
+        returnValue = modelMapper.map(createdUser, UserRest.class);
 
         return returnValue;
     }
@@ -96,6 +106,34 @@ public class UserController {
             returnValue.add(userModel);
         }
         return returnValue;
+    }
+    //Getting addresses with user id
+    //http://localhost:8081/mobile-app-ws/users/hdhss745554934/addresses
+    @GetMapping(path="/{id}/addresses",
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public List<AddressesRest> getUserAddresses(@PathVariable String  id)
+    {
+        List<AddressesRest> returnValue = new ArrayList<>();
+        List<AddressDto> addressesDto = addressesService.getAddresses(id);
+
+        if(addressesDto != null && !addressesDto.isEmpty()) {
+            java.lang.reflect.Type listType = new TypeToken<List<AddressesRest>>() {}.getType();
+            ModelMapper modelMapper = new ModelMapper();
+            returnValue = modelMapper.map(addressesDto, listType);
+        }
+        return returnValue;
+    }
+
+    //Getting single addresses with address id:
+    //http://localhost:8081/mobile-app-ws/users/hdhss745554934/addresses/ghggsd8888
+    @GetMapping(path="/{userId}/addresses/{addressId}",
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public AddressesRest getUserAddress(@PathVariable String  addressId){
+        AddressDto addressDto = addressService.getAddress(addressId);
+
+        ModelMapper modelMapper = new ModelMapper();
+
+        return  modelMapper.map(addressDto, AddressesRest.class);
     }
 
 }

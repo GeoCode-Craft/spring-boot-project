@@ -1,38 +1,13 @@
-package com.brianpondi.app.ws.io.entity;
+package com.brianpondi.app.ws.ui.model.response;
 
-import javax.persistence.*;
-import java.io.Serializable;
-
-@Entity(name="addresses")
-public class AddressEntity  implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue
+public class AddressesRest {
     private long id;
-
-    @Column(length = 30, nullable = false)
     private String addressId;
-
-    @Column(length = 15, nullable = false)
     private String city;
-
-    @Column(length = 15, nullable = false)
     private String country;
-
-    @Column(length = 100, nullable = false)
     private String streetName;
-
-    @Column(length = 7, nullable = false)
     private String postalCode;
-
-    @Column(length = 10, nullable = false)
     private String type;
-
-    @ManyToOne
-    @JoinColumn(name = "users_id")
-    private UserEntity userDetails;
 
     public long getId() {
         return id;
@@ -88,13 +63,5 @@ public class AddressEntity  implements Serializable {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public UserEntity getUserDetails() {
-        return userDetails;
-    }
-
-    public void setUserDetails(UserEntity userDetails) {
-        this.userDetails = userDetails;
     }
 }
