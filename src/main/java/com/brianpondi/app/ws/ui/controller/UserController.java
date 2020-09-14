@@ -169,7 +169,7 @@ public class UserController {
     }
 
     //Verify email with SES and SNS
-    //http://localhost:8081/mobile-app-ws/users/hdhss745554934/addresses
+    //http://localhost:8081/mobile-app-ws/users/email-verification?token=ddffgg
     @GetMapping(path="/email-verification",
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public OperationStatusModel verifyEmailToken(@RequestParam(value="token") String token){
