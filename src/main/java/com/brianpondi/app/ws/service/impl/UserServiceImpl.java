@@ -4,6 +4,7 @@ import com.brianpondi.app.ws.exceptions.UserServiceException;
 import com.brianpondi.app.ws.io.entity.UserEntity;
 import com.brianpondi.app.ws.repository.UserRepository;
 import com.brianpondi.app.ws.service.UserService;
+import com.brianpondi.app.ws.shared.AmazonSES;
 import com.brianpondi.app.ws.shared.Utils;
 import com.brianpondi.app.ws.shared.dto.AddressDto;
 import com.brianpondi.app.ws.shared.dto.UserDto;
@@ -55,7 +56,7 @@ public class UserServiceImpl implements UserService {
         String publicUserId = utils.generateUserId(30);
         userEntity.setUserId(publicUserId);
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userEntity.setEmailverificationToken(Utils.generateEmailVerificationToken(publicUserId));
+        userEntity.setEmailverificationToken(utils.generateEmailVerificationToken(publicUserId));
         userEntity.setEmailVerificationStatus(false);
 
 
@@ -63,6 +64,9 @@ public class UserServiceImpl implements UserService {
 
 //        BeanUtils.copyProperties(storedUserDetails , returnValue);
         UserDto returnValue  =modelMapper.map(storedUserDetails,UserDto.class);
+
+        //Send an email message to users to verify their email address
+        new AmazonSES().verifyEmail(returnValue);
 
         return returnValue;
     }
@@ -159,6 +163,10 @@ public class UserServiceImpl implements UserService {
        UserEntity userEntity = userRepository.findByEmail(email);
 
        if (userEntity==null) throw new UsernameNotFoundException(email);
-        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
+
+       return new User(userEntity.getEmail(),userEntity.getEncryptedPassword(),
+               userEntity.getEmailVerificationStatus(), true, true,
+               true, new ArrayList<>());
+        //return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
     }
 }

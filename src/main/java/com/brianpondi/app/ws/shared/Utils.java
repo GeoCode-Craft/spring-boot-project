@@ -42,7 +42,7 @@ public class Utils {
         Date todayDate = new Date();
         return  tokenExpirationDate.before(todayDate);
     }
-    public static String generateEmailVerificationToken(String userId){
+    public String generateEmailVerificationToken(String userId){
         String token = Jwts.builder()
                 .setSubject(userId)
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
