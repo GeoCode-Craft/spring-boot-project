@@ -5,6 +5,7 @@ import com.brianpondi.app.ws.service.AddressService;
 import com.brianpondi.app.ws.service.UserService;
 import com.brianpondi.app.ws.shared.dto.AddressDto;
 import com.brianpondi.app.ws.shared.dto.UserDto;
+import com.brianpondi.app.ws.ui.model.request.PasswordResetModel;
 import com.brianpondi.app.ws.ui.model.request.PasswordResetRequestModel;
 import com.brianpondi.app.ws.ui.model.request.RequestOperationName;
 import com.brianpondi.app.ws.ui.model.request.UserDetailsRequestModel;
@@ -191,7 +192,8 @@ public class UserController {
 
     }
 
-    //Reseting user password
+
+    //Password reset request
     //http://localhost:8081/mobile-app-ws/users/password-reset-request
     @PostMapping(path="/password-reset-request",
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
@@ -202,6 +204,30 @@ public class UserController {
         boolean operationResult = userService.requestPasswordReset(passwordResetRequestModel.getEmail());
 
         returnValue.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
+        returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
+
+        if (operationResult) {
+            returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        }else {
+            returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
+        }
+
+        return returnValue;
+
+    }
+
+    //http://localhost:8081/mobile-app-ws/users/password-reset
+    @PostMapping(path="/password-reset",
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public OperationStatusModel resetPassword(@RequestBody PasswordResetModel passwordResetModel){
+
+        OperationStatusModel returnValue = new OperationStatusModel();
+
+        boolean operationResult = userService.resetPassword(
+                passwordResetModel.getToken(),
+                passwordResetModel.getPassword());
+
+        returnValue.setOperationName(RequestOperationName.PASSWORD_RESET.name());
         returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
 
         if (operationResult) {
