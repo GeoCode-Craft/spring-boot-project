@@ -1,7 +1,9 @@
 package com.brianpondi.app.ws.service.impl;
 
 import com.brianpondi.app.ws.exceptions.UserServiceException;
+import com.brianpondi.app.ws.io.entity.PasswordResetTokenEntity;
 import com.brianpondi.app.ws.io.entity.UserEntity;
+import com.brianpondi.app.ws.repository.PasswordResetTokenRepository;
 import com.brianpondi.app.ws.repository.UserRepository;
 import com.brianpondi.app.ws.service.UserService;
 import com.brianpondi.app.ws.shared.AmazonSES;
@@ -34,6 +36,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    PasswordResetTokenRepository  passwordResetTokenRepository;
 
     @Override
     public UserDto createUser(UserDto user) {
@@ -156,6 +161,29 @@ public class UserServiceImpl implements UserService {
             }
         }
         return  returnValue;
+    }
+
+    @Override
+    public boolean requestPasswordReset(String email) {
+        boolean returnValue = false;
+        UserEntity userEntity = userRepository.findByEmail(email);
+
+        if(userEntity == null){
+            return returnValue;
+        }
+
+        String token = Utils.generatePasswordResetToken(userEntity.getUserId());
+        PasswordResetTokenEntity passwordResetTokenEntity = new PasswordResetTokenEntity();
+        passwordResetTokenEntity.setToken(token);
+        passwordResetTokenEntity.setUserDetails(userEntity);
+        passwordResetTokenRepository.save(passwordResetTokenEntity);
+
+        returnValue = new AmazonSES().sendPasswordResetRequest(
+                userEntity.getFirstName(),
+                userEntity.getEmail(),
+                token);
+
+        return returnValue;
     }
 
     @Override
